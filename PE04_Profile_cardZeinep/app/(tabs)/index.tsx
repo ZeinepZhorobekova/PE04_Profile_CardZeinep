@@ -8,7 +8,15 @@ import {
   SafeAreaView,
   FlatList,
   Dimensions,
+  LayoutAnimation,
+  Platform,
+  UIManager,
 } from 'react-native';
+
+// Enable LayoutAnimation on Android
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 const cardsData = Array.from({ length: 6 }, (_, i) => ({
   id: i.toString(),
@@ -22,8 +30,16 @@ export default function Index() {
   const [expandedCardId, setExpandedCardId] = useState(null);
 
   const toggleCard = (id) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpandedCardId((prevId) => (prevId === id ? null : id));
   };
+
+  // Calculate widths for cards dynamically
+  const screenWidth = Dimensions.get('window').width;
+  const cardMargin = 20;
+  const numColumns = 2;
+  const collapsedCardWidth = (screenWidth - cardMargin * (numColumns + 1)) / numColumns; // for spacing
+  const expandedCardWidth = screenWidth * 0.8;
 
   const renderCard = ({ item }) => {
     const isExpanded = expandedCardId === item.id;
@@ -31,7 +47,14 @@ export default function Index() {
       <TouchableOpacity
         onPress={() => toggleCard(item.id)}
         activeOpacity={0.8}
-        style={isExpanded ? styles.cardContainer : styles.collapsedCardContainer}
+        style={[
+          styles.cardContainer,
+          {
+            width: isExpanded ? expandedCardWidth : collapsedCardWidth,
+            height: isExpanded ? null : collapsedCardWidth, // square when collapsed
+          },
+          isExpanded ? {} : styles.collapsedCardContainer,
+        ]}
       >
         <View style={styles.innerContainer}>
           <View style={styles.imageWrapper}>
@@ -62,6 +85,7 @@ export default function Index() {
         numColumns={2}
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.listContent}
+        extraData={expandedCardId} // re-render on change
       />
     </SafeAreaView>
   );
@@ -71,8 +95,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#E2E2E2',
-    alignItems: 'center',
-    justifyContent: 'center',
+    // Use flex-start to avoid centering issues with FlatList
+    alignItems: 'stretch',
+    justifyContent: 'flex-start',
   },
   listContent: {
     paddingVertical: 30,
@@ -82,7 +107,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   cardContainer: {
-    width: Dimensions.get('window').width * 0.8,
     backgroundColor: '#2F95DC',
     borderRadius: 15,
     borderColor: '#000',
@@ -96,19 +120,10 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   collapsedCardContainer: {
-    width: 120,
-    height: 120,
-    backgroundColor: '#2F95DC',
-    borderRadius: 15,
-    borderColor: '#000',
-    borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
   },
   innerContainer: {
     alignItems: 'center',
