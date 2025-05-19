@@ -1,71 +1,61 @@
-// Listing 4.5 Dynamic stylesheets extracted from the main component file
-
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 
 /*
-    Constant defining the colors that will correspond to the light and dark themes.
+  Constant defining colors for light and dark themes.
 */
 export const Colors = {
-    dark: 'black',
-    light: 'white'
+  dark: '#000000',  // using hex for clarity
+  light: '#FFFFFF',
 };
 
 /*
-    JavaScript object to hold the base container styles.
+  Base styles for container and box to avoid repetition.
 */
 const baseContainerStyles = {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
 };
 
-/*
-    JavaScript object to hold the base box styles.
-*/
 const baseBoxStyles = {
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    height: 150,
-    width: 150
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderWidth: 2,
+  height: 150,
+  width: 150,
 };
 
 /*
-    Spread Operator
-    https://www.w3schools.com/react/react_es6_spread.asp
-*/
-/*
-    Creates the stylesheet for the light theme.
+  Stylesheet for light theme using spread operator to inherit base styles.
 */
 const lightStyleSheet = StyleSheet.create({
-    container: {
-        ...baseContainerStyles,
-        backgroundColor: Colors.light
-    },
-    box: {
-        ...baseBoxStyles,
-        borderColor: Colors.dark
-    }
+  container: {
+    ...baseContainerStyles,
+    backgroundColor: Colors.light,
+  },
+  box: {
+    ...baseBoxStyles,
+    borderColor: Colors.dark,
+  },
 });
 
 /*
-    Creates the stylesheet for the dark theme.
+  Stylesheet for dark theme using spread operator.
 */
 const darkStyleSheet = StyleSheet.create({
-    container: {
-        ...baseContainerStyles,
-        backgroundColor: Colors.dark
-    },
-    box: {
-        ...baseBoxStyles,
-        borderColor: Colors.light
-    }
+  container: {
+    ...baseContainerStyles,
+    backgroundColor: Colors.dark,
+  },
+  box: {
+    ...baseBoxStyles,
+    borderColor: Colors.light,
+  },
 });
 
 /*
-    Function that will return the appropriate theme based on a Boolean value.
-    Returns the dark theme if useDarkTheme is true; otherwise returns the light theme.
+  Function to return stylesheet based on boolean useDarkTheme.
 */
 export default function getStyleSheet(useDarkTheme) {
-    return useDarkTheme ? darkStyleSheet : lightStyleSheet; 
+  return useDarkTheme ? darkStyleSheet : lightStyleSheet;
 }
